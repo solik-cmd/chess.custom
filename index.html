@@ -18,26 +18,26 @@ body{
  color:#edf3fa;font-family:Inter,Segoe UI,Arial,sans-serif;
 }
 header{
- background:#172330f5;padding:14px 20px;display:flex;
+ background:#172330f5;padding:12px 16px;display:flex;
  justify-content:space-between;align-items:center;gap:10px;
  flex-wrap:wrap;border-bottom:1px solid #344052;
- position:sticky;top:0;z-index:20;
+ position:sticky;top:0;z-index:100;
 }
-.logo{font-size:22px;color:var(--accent);font-weight:bold}
+.logo{font-size:20px;color:var(--accent);font-weight:bold}
 main{
- width:100%;max-width:1380px;margin:20px auto;padding:12px 18px;
+ width:100%;max-width:1380px;margin:10px auto;padding:10px;
  display:grid;grid-template-columns:minmax(0,1.2fr) minmax(280px,.8fr);
- gap:20px;align-items:start;
+ gap:16px;align-items:start;
 }
 .panel{
  background:linear-gradient(180deg,#1a2938,#151f2b);
- border:1px solid #34475a;border-radius:16px;padding:17px;
+ border:1px solid #34475a;border-radius:16px;padding:14px;
  min-width:0;box-shadow:0 14px 36px #0003;
 }
 #board{
  display:grid;grid-template-columns:repeat(8,minmax(0,1fr));
  width:100%;max-width:720px;margin:auto;aspect-ratio:1;
- overflow:hidden;border:5px solid var(--board-edge);
+ overflow:hidden;border:4px solid var(--board-edge);
  border-radius:10px;box-shadow:0 15px 38px #0005;
  touch-action:manipulation;
 }
@@ -48,7 +48,7 @@ main{
 }
 .light{background:var(--light)}
 .dark{background:var(--dark)}
-.selected{box-shadow:inset 0 0 0 4px #f5ce48;z-index:1}
+.selected{box-shadow:inset 0 0 0 4px #f5ce48;z-index:2}
 .last-move{background-image:linear-gradient(#f5d45a55,#f5d45a55)}
 .legal-target:after{
  content:'';position:absolute;width:24%;height:24%;
@@ -65,122 +65,80 @@ main{
 }
 button,select,input,textarea{
  background:var(--panel2);color:#edf3fa;
- border:1px solid #46566b;border-radius:7px;
- padding:10px;max-width:100%;font:inherit;
+ border:1px solid #46566b;border-radius:8px;
+ padding:10px 12px;max-width:100%;font:inherit;
 }
 button{
  cursor:pointer;touch-action:manipulation;
  user-select:none;-webkit-user-select:none;
- position:relative;z-index:1;
+ min-height:44px; /* Удобно для нажатия пальцем */
 }
-button:hover{border-color:var(--accent)}
-button:active{transform:scale(0.98);border-color:var(--accent)}
+button:active{transform:scale(0.97);border-color:var(--accent)}
 button.active{background:#247b55;border-color:var(--accent)}
 button:disabled{opacity:.4}
-.row{display:flex;flex-wrap:wrap;gap:6px;margin:10px 0}
+.row{display:flex;flex-wrap:wrap;gap:6px;margin:8px 0}
 .row>*{max-width:100%}
-h2{font-size:17px;color:var(--accent)}
-h3{font-size:14px;color:#cbd8e5}
-.small{font-size:12px;color:var(--muted);line-height:1.6}
-#status{padding:12px;background:var(--panel2);border-radius:8px;margin-bottom:12px}
-#moves{max-height:140px;overflow:auto;line-height:1.8}
+h2{font-size:16px;color:var(--accent);margin:12px 0 6px}
+h3{font-size:14px;color:#cbd8e5;margin:10px 0 4px}
+.small{font-size:12px;color:var(--muted);line-height:1.5}
+#status{padding:10px;background:var(--panel2);border-radius:8px;margin-bottom:10px;font-weight:500}
+#moves{max-height:130px;overflow:auto;line-height:1.6}
 #palette,#standardPalette{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:5px}
-.palette-piece{font-size:clamp(20px,4vw,30px);padding:7px;min-width:0}
+.palette-piece{font-size:clamp(20px,4vw,30px);padding:6px;min-width:0}
 .palette-piece.active{outline:2px solid var(--accent);background:#24533f}
 .upload-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
 .upload-item{
- padding:9px;background:var(--panel2);border-radius:8px;
+ padding:8px;background:var(--panel2);border-radius:8px;
  display:flex;flex-direction:column;gap:6px;min-width:0;
 }
-.upload-item img{width:48px;height:48px;object-fit:contain}
+.upload-item img{width:44px;height:44px;object-fit:contain}
 .piece-choice{
  display:flex;align-items:center;gap:8px;padding:8px;
  background:var(--panel2);border:1px solid #46566b;
- border-radius:8px;margin:5px 0;min-width:0;
+ border-radius:8px;margin:4px 0;min-width:0;
 }
-.piece-choice img{width:38px;height:38px;object-fit:contain}
-.piece-choice button{margin-left:auto}
-.field-note{font-size:11px;color:var(--muted)}
+.piece-choice img{width:36px;height:36px;object-fit:contain}
+.piece-choice button{margin-left:auto;min-height:36px;padding:6px 10px}
 .section{display:none}
-.theme-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px}
-.theme-button{height:55px}
+.theme-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px}
 label{font-size:13px;display:block;margin-top:6px}
-input[type=text],input[type=number]{width:100%;min-width:0}
+input[type=text],input[type=number],select{width:100%;min-width:0;min-height:42px}
 input[type=file]{width:100%;font-size:11px}
-input[type=color]{max-width:100%}
 #gameTab,#piecesTab,#designTab,#editTab{min-width:0}
 #saveStatus{overflow-wrap:anywhere}
 img{max-width:100%}
 
-/* Планшеты */
+/* Планшеты и телефоны */
 @media(max-width:900px){
  main{
   grid-template-columns:minmax(0,1fr);
-  max-width:760px;margin:8px auto;padding:10px;
+  max-width:760px;margin:6px auto;padding:8px;
  }
- header{padding:12px 15px}
- .panel{padding:14px}
- #board{max-width:min(100%,650px)}
+ header{padding:10px 12px}
+ .panel{padding:12px}
+ #board{max-width:min(100%,600px)}
 }
 
-/* Телефоны */
 @media(max-width:600px){
- header{
-  position:relative;padding:10px 12px;
-  align-items:flex-start;
- }
- .logo{font-size:19px}
- header .row{width:100%;margin:5px 0 0}
- header button{flex:1;padding:10px 6px;font-size:12px;min-height:42px}
- main{padding:7px;gap:10px;margin:5px auto}
+ header{padding:8px 10px}
+ .logo{font-size:18px}
+ header .row{width:100%;margin:4px 0 0}
+ header button{flex:1;padding:8px 4px;font-size:11px;min-height:40px}
+ main{padding:4px;gap:8px}
  .panel{padding:10px;border-radius:12px}
- #board{border-width:3px;border-radius:5px}
- .square{min-width:0}
- .glyph{font-size:clamp(20px,8vw,42px)}
- .row{gap:6px}
- .row button{flex:1 1 auto;font-size:13px;padding:10px 8px;min-height:42px}
  #palette,#standardPalette{grid-template-columns:repeat(4,minmax(0,1fr))}
- .palette-piece{font-size:26px;padding:8px 3px}
  .upload-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
- .piece-choice{flex-wrap:wrap}
- .piece-choice button{margin-left:0}
- h2{font-size:16px}
- input,select{font-size:16px}
-}
-
-/* Очень узкие телефоны */
-@media(max-width:360px){
- main{padding:4px}
- .panel{padding:8px}
- .logo{font-size:17px}
- #board{border-width:2px}
- .glyph{font-size:20px}
- .row button{font-size:12px;padding:9px 5px}
- #palette,#standardPalette{grid-template-columns:repeat(3,minmax(0,1fr))}
- .upload-grid{grid-template-columns:1fr}
-}
-
-/* Большие мониторы */
-@media(min-width:1400px){
- main{max-width:1500px}
- #board{max-width:760px}
-}
-
-/* Сенсорное управление */
-@media(hover:none){
- button:hover{transform:none}
- button{min-height:42px}
- .square{touch-action:manipulation}
+ input,select{font-size:16px} /* Предотвращает зум на iOS при фокусе */
 }
 </style>
 </head>
 <body>
 
 <header>
- <div class="logo">♟ Chess Studio 4.0</div>
+ <div class="logo">♟ Chess Studio</div>
  <div class="row">
   <button type="button" data-action="tab-game">Игра</button>
-  <button type="button" data-action="tab-pieces">Мои фигуры</button>
+  <button type="button" data-action="tab-pieces">Фигуры</button>
   <button type="button" data-action="tab-design">Дизайн</button>
   <button type="button" data-action="fullscreen">⛶</button>
  </div>
@@ -193,28 +151,27 @@ img{max-width:100%}
 
  <div class="row">
   <button type="button" data-action="undo">↶ Назад</button>
-  <button type="button" data-action="reset">⟳ Новая партия</button>
-  <button type="button" data-action="flip">⇅ Перевернуть</button>
+  <button type="button" data-action="reset">⟳ Новая</button>
+  <button type="button" data-action="flip">⇅ Поворот</button>
  </div>
 
  <div class="row">
   <button type="button" id="normalBtn" class="active" data-action="mode-normal">Шахматы</button>
-  <button type="button" id="freeBtn" data-action="mode-free">Свободный режим</button>
-  <button type="button" id="editBtn" data-action="mode-edit">Редактор доски</button>
+  <button type="button" id="freeBtn" data-action="mode-free">Свободный</button>
+  <button type="button" id="editBtn" data-action="mode-edit">Редактор</button>
  </div>
 
  <div class="row">
-  <button type="button" data-action="copy-fen">📋 Копировать FEN</button>
+  <button type="button" data-action="copy-fen">📋 FEN</button>
   <button type="button" data-action="load-fen">Загрузить FEN</button>
-  <button type="button" data-action="save-pos">💾 Сохранить позицию</button>
-  <button type="button" data-action="show-pos">📂 Мои сохранения</button>
-  <button type="button" data-action="export-png">🖼 Сохранить доску PNG</button>
-  <button type="button" data-action="export-backup">⬇ Резервная копия</button>
-  <button type="button" data-action="import-backup-trigger">⬆ Загрузить копию</button>
+  <button type="button" data-action="save-pos">💾 Сохранить</button>
+  <button type="button" data-action="show-pos">📂 Мои</button>
+  <button type="button" data-action="export-png">🖼 PNG</button>
+  <button type="button" data-action="export-backup">⬇ Бэкап</button>
+  <button type="button" data-action="import-backup-trigger">⬆ Загрузить</button>
   <input id="backupFile" type="file" accept="application/json,.json" style="display:none">
  </div>
- <p class="small">Автосохранение включено: партия, доска, темы, собственные фигуры и загруженные изображения сохраняются в этом браузере. PNG сохраняет текущую доску как картинку.</p>
- <p class="small" id="saveStatus">Автосохранение готово.</p>
+ <p class="small" id="saveStatus">Автосохранение активно.</p>
 </section>
 
 <aside class="panel">
@@ -233,8 +190,8 @@ img{max-width:100%}
   <option value="15">Максимальная</option>
  </select>
  <div class="row">
-  <button type="button" data-action="connect-engine">Подключить движок</button>
-  <button type="button" data-action="engine-move">Ход Stockfish</button>
+  <button type="button" data-action="connect-engine">Включить движок</button>
+  <button type="button" data-action="engine-move">Ход движка</button>
  </div>
  <p class="small" id="engineStatus">Движок не подключён.</p>
  <h2>📜 История ходов</h2>
@@ -243,18 +200,17 @@ img{max-width:100%}
 
 <div id="piecesTab" class="section">
  <h2>🧩 Мои фигуры</h2>
- <p class="small">Создавай собственные фигуры с уникальными изображениями и правилами передвижения.</p>
  <div id="myPieces" class="upload-grid"></div>
  <h2>＋ Создать фигуру</h2>
  <label>Название</label>
  <input id="pieceName" type="text" placeholder="Например: Дракон">
- <label>Символ фигуры</label>
+ <label>Символ (если нет фото)</label>
  <input id="pieceGlyph" type="text" value="★" maxlength="4">
- <label>Цвет фигуры</label>
+ <label>Цвет</label>
  <input id="pieceColor" type="color" value="#ffffff">
  <label>Изображение</label>
  <input id="pieceFile" type="file" accept="image/png,image/jpeg,image/webp">
- <label>Способ движения</label>
+ <label>Ход фигуры</label>
  <select id="pieceMovement">
   <option value="all">В любую сторону</option>
   <option value="straight">По прямой</option>
@@ -266,41 +222,40 @@ img{max-width:100%}
   <option value="king">Как король</option>
   <option value="queen">Как ферзь</option>
  </select>
- <label>Максимальная дальность</label>
+ <label>Дальность</label>
  <input id="pieceDistance" type="number" min="1" max="8" value="8">
  <div class="row">
-  <button type="button" data-action="create-piece">Сохранить фигуру</button>
+  <button type="button" data-action="create-piece">Сохранить</button>
   <button type="button" data-action="clear-creator">Очистить</button>
  </div>
- <h2>Установка фигур</h2>
- <p class="small">Выбери фигуру и нажми «Режим установки», чтобы добавить её на доску. Для перемещения уже установленных фигур включи «Режим перемещения».</p>
+ <h2>Установка на доску</h2>
  <div class="row">
-  <button type="button" id="placeCustomBtn" class="active" data-action="tool-place">＋ Режим установки</button>
-  <button type="button" id="moveCustomBtn" data-action="tool-move">↔ Режим перемещения</button>
+  <button type="button" id="placeCustomBtn" class="active" data-action="tool-place">＋ Установка</button>
+  <button type="button" id="moveCustomBtn" data-action="tool-move">↔ Перемещение</button>
  </div>
- <p class="small" id="pieceToolStatus">Выбери фигуру ниже, затем нажми на клетку доски.</p>
+ <p class="small" id="pieceToolStatus">Выберите фигуру ниже.</p>
  <div id="customPalette"></div>
 </div>
 
 <div id="designTab" class="section">
- <h2>♟ Темы фигурок</h2>
- <p class="small">Ищет файлы <code>wK.png, wQ.png, wR.png, wB.png, wN.png, wP.png</code> и <code>bK.png...</code> в выбранной папке рядом с HTML-файлом.</p>
+ <h2>♟ Темы фигурок (из папок)</h2>
+ <p class="small">Ищет файлы `wK.png`, `bP.png` и т.д. в указанных папках рядом со скриптом.</p>
  <div class="theme-grid">
-  <button type="button" id="setDefaultBtn" class="active" data-action="piece-set-default">Стандарт (Символы)</button>
-  <button type="button" id="setCheqBtn" data-action="piece-set-cheq">1. cheq (папка cheq/)</button>
-  <button type="button" id="setDilenaBtn" data-action="piece-set-dilena">2. dilena (папка dilena/)</button>
+  <button type="button" id="setDefaultBtn" class="active" data-action="piece-set-default">Символы</button>
+  <button type="button" id="setCheqBtn" data-action="piece-set-cheq">1. cheq/</button>
+  <button type="button" id="setDilenaBtn" data-action="piece-set-dilena">2. dilena/</button>
   <button type="button" id="setCustomFolderBtn" data-action="piece-set-custom">3. Своя папка</button>
  </div>
- <div id="customFolderBox" style="margin-top:8px;">
-  <label>Имя папки для 3-й темы (рядом со скриптом):</label>
+ <div style="margin-top:6px;">
+  <label>Папка для 3-й темы:</label>
   <div class="row">
-   <input id="customPieceFolder" type="text" placeholder="Например: my_pieces" value="custom_pieces" style="flex:1">
-   <button type="button" data-action="apply-custom-folder">Применить</button>
+   <input id="customPieceFolder" type="text" value="custom_pieces" style="flex:1">
+   <button type="button" data-action="apply-custom-folder">OK</button>
   </div>
-  <p class="small" id="pieceSetStatus">Активна тема: Стандарт</p>
+  <p class="small" id="pieceSetStatus">Тема: Стандарт</p>
  </div>
 
- <h2>🎨 Оформление доски</h2>
+ <h2>🎨 Цвета доски</h2>
  <div class="theme-grid">
   <button type="button" data-action="theme-classic">Classic</button>
   <button type="button" data-action="theme-gray">Gray</button>
@@ -309,11 +264,8 @@ img{max-width:100%}
   <button type="button" data-action="theme-purple">Purple</button>
   <button type="button" data-action="theme-forest">Forest</button>
  </div>
- <h3>Свои цвета</h3>
- <label>Светлые клетки <input type="color" id="lightColor" value="#e8d9bd"></label>
- <label>Тёмные клетки <input type="color" id="darkColor" value="#77966b"></label>
- <h3>Изображения стандартных фигур (вручную)</h3>
- <div id="standardUploads" class="upload-grid"></div>
+ <label>Светлые <input type="color" id="lightColor" value="#e8d9bd"></label>
+ <label>Тёмные <input type="color" id="darkColor" value="#77966b"></label>
 </div>
 
 <div id="editTab" class="section">
@@ -321,16 +273,16 @@ img{max-width:100%}
  <div id="standardPalette"></div>
  <div class="row">
   <button type="button" data-action="edit-eraser">Ластик</button>
-  <button type="button" data-action="edit-clear">Очистить доску</button>
-  <button type="button" data-action="edit-startpos">Начальная позиция</button>
+  <button type="button" data-action="edit-clear">Очистить</button>
+  <button type="button" data-action="edit-startpos">С начала</button>
  </div>
- <label>Кто ходит первым</label>
+ <label>Первый ход</label>
  <select id="editTurn">
   <option value="w">Белые</option>
   <option value="b">Чёрные</option>
  </select>
  <div class="row">
-  <button type="button" data-action="edit-play">Играть с этой позиции</button>
+  <button type="button" data-action="edit-play">Играть с позиции</button>
  </div>
 </div>
 
@@ -356,7 +308,7 @@ let mode='normal',selected=null,flipped=false;
 let opponent='human',engine=null,engineReady=false,thinking=false;
 let customPieces=[];
 let customImages={};
-let pieceSetTheme='default'; // 'default' | 'cheq' | 'dilena' | 'custom'
+let pieceSetTheme='default';
 let customPieceFolder='custom_pieces';
 let customBoard=Array.from({length:8},()=>Array(8).fill(null));
 let chosenCustom=null,chosenStandard='P';
@@ -367,7 +319,7 @@ try{savedPositions=JSON.parse(localStorage.getItem('csSavedPositions')||'[]')}ca
 try{customPieces=JSON.parse(localStorage.getItem('csPieces')||'[]')}catch(e){}
 try{customImages=JSON.parse(localStorage.getItem('csImages')||'{}')}catch(e){}
 
-/* Универсальный обработчик нажатий для мобильных и десктопа */
+/* Надежная функция обработки касаний и кликов без задержек */
 function bindTap(el, handler){
  if(!el) return;
  let touchMoved = false;
@@ -394,15 +346,10 @@ function bindTap(el, handler){
  });
 }
 
-/* Получение пути к картинке фигуры с учётом выбранной темы */
 function getStandardPieceImage(type){
  if(!type || !pieceFileMap[type]) return null;
- if(pieceSetTheme === 'cheq'){
-  return 'cheq/' + pieceFileMap[type];
- }
- if(pieceSetTheme === 'dilena'){
-  return 'dilena/' + pieceFileMap[type];
- }
+ if(pieceSetTheme === 'cheq') return 'cheq/' + pieceFileMap[type];
+ if(pieceSetTheme === 'dilena') return 'dilena/' + pieceFileMap[type];
  if(pieceSetTheme === 'custom'){
   const folder = (customPieceFolder || '').trim().replace(/^\/+|\/+$/g, '');
   if(folder) return folder + '/' + pieceFileMap[type];
@@ -429,10 +376,10 @@ function updatePieceSetUI(){
 
  const st = document.getElementById('pieceSetStatus');
  if(!st) return;
- if(pieceSetTheme === 'default') st.textContent = 'Активна тема: Стандарт (символы или загруженные вручную)';
- else if(pieceSetTheme === 'cheq') st.textContent = 'Активна тема: cheq (папка cheq/ рядом со скриптом)';
- else if(pieceSetTheme === 'dilena') st.textContent = 'Активна тема: dilena (папка dilena/ рядом со скриптом)';
- else if(pieceSetTheme === 'custom') st.textContent = 'Активна тема: своя папка «' + (customPieceFolder || 'не указана') + '/»';
+ if(pieceSetTheme === 'default') st.textContent = 'Тема: Стандарт';
+ else if(pieceSetTheme === 'cheq') st.textContent = 'Тема: cheq/';
+ else if(pieceSetTheme === 'dilena') st.textContent = 'Тема: dilena/';
+ else if(pieceSetTheme === 'custom') st.textContent = 'Тема: ' + (customPieceFolder || 'своя') + '/';
 }
 
 function showTab(t){
@@ -441,12 +388,13 @@ function showTab(t){
  const target=document.getElementById(map[t]||'gameTab');
  if(target)target.style.display='block';
  if(t==='pieces')renderCustom();
- if(t==='design'){renderStandardUploads();updatePieceSetUI();}
+ if(t==='design')updatePieceSetUI();
 }
 
 function boardFromGame(){
  return game.board().map(row=>row.map(p=>p?{type:p.color==='w'?p.type.toUpperCase():p.type,custom:false,color:p.color}:null));
 }
+
 function setMode(m){
  if(m==='free'&&mode!=='free'&&mode!=='edit')customBoard=boardFromGame();
  mode=m;selected=null;chosenCustom=null;
@@ -458,6 +406,7 @@ function setMode(m){
  else showTab('game');
  draw();
 }
+
 function currentData(){
  if(mode==='free'||mode==='edit')return customBoard;
  return game.board().map(row=>row.map(p=>p?{type:p.color==='w'?p.type.toUpperCase():p.type,custom:false,color:p.color}:null));
@@ -490,8 +439,6 @@ function draw(){
     let img=document.createElement('img');
     img.src=image;
     img.className='piece';
-    img.alt=item.type||'';
-    /* Если файл в папке не найден, подставляем стандартный символ */
     img.onerror=()=>{
      img.remove();
      cell.append(createGlyphSpan(item, id));
@@ -518,7 +465,7 @@ function draw(){
 
 function updateStatus(){
  let status=document.getElementById('status');
- if(mode==='free')status.textContent='⚡ Свободный режим — можно расставлять и перемещать фигуры.';
+ if(mode==='free')status.textContent='⚡ Свободный режим';
  else if(mode==='edit')status.textContent='🛠 Редактор доски';
  else {
   const isMate = typeof game.isCheckmate==='function' ? game.isCheckmate() : game.in_checkmate();
@@ -532,6 +479,7 @@ function updateStatus(){
   document.getElementById('moves').innerHTML=out||'Ходов нет.';
  }
 }
+
 function coordinate(sq){return {r:8-Number(sq[1]),c:files.indexOf(sq[0])};}
 
 function clickCell(sq){
@@ -584,10 +532,12 @@ function clickCell(sq){
  selected=piece&&piece.color===game.turn()?sq:null;
  draw();
 }
+
 function pushFreeHistory(){
  freeHistory.push(customBoard.map(row=>row.map(cell=>cell?{...cell}:null)));
  if(freeHistory.length>100)freeHistory.shift();
 }
+
 function undo(){
  if(mode==='free'||mode==='edit'){
   if(!freeHistory.length)return;
@@ -600,6 +550,7 @@ function undo(){
   draw();
  }
 }
+
 function resetGame(){
  game.reset();customBoard=boardFromGame();freeHistory=[];selected=null;chosenCustom=null;lastMove=null;mode='normal';
  document.getElementById('normalBtn').classList.add('active');
@@ -607,6 +558,7 @@ function resetGame(){
  document.getElementById('editBtn').classList.remove('active');
  showTab('game');draw();
 }
+
 function flipBoard(){flipped=!flipped;draw()}
 
 function setFreeTool(tool){
@@ -615,84 +567,78 @@ function setFreeTool(tool){
  document.getElementById('placeCustomBtn').classList.toggle('active',tool==='place');
  document.getElementById('moveCustomBtn').classList.toggle('active',tool==='move');
  document.getElementById('pieceToolStatus').textContent=tool==='place'
-  ?(chosenCustom?'Фигура выбрана: нажми на клетку доски для установки.':'Сначала выбери свою фигуру ниже.')
-  :'Нажми на фигуру на доске, затем на клетку назначения.';
+  ?(chosenCustom?'Нажмите на клетку для установки.':'Выберите фигуру ниже.')
+  :'Режим перемещения фигур.';
  renderCustomPalette();draw();
 }
+
 function chooseCustom(id){
- if(chosenCustom===id&&freeTool==='place'){cancelPieceSelection();return;}
+ if(chosenCustom===id&&freeTool==='place'){
+  chosenCustom=null;selected=null;freeTool='move';
+  document.getElementById('placeCustomBtn')?.classList.remove('active');
+  document.getElementById('moveCustomBtn')?.classList.add('active');
+  renderCustomPalette();draw();
+  return;
+ }
  chosenCustom=id;chosenStandard='';
  freeTool='place';
  if(mode!=='free')setMode('free');
  setFreeTool('place');
- document.getElementById('pieceToolStatus').textContent='Выбрана фигура «'+(customPieces.find(p=>p.id===id)?.name||'')+'». Нажми на клетку доски.';
  draw();renderCustomPalette();
 }
-function cancelPieceSelection(){
- chosenCustom=null;chosenStandard='';
- selected=null;freeTool='move';
- document.getElementById('placeCustomBtn')?.classList.remove('active');
- document.getElementById('moveCustomBtn')?.classList.add('active');
- const info=document.getElementById('pieceToolStatus');if(info)info.textContent='Выбор отменён. Теперь можно перемещать фигуры.';
- renderCustomPalette();draw();
-}
+
 function chooseStandard(p){
  chosenStandard=p;chosenCustom=null;
  if(mode!=='edit')setMode('edit');
 }
+
 function renderCustomPalette(){
  const root=document.getElementById('customPalette');if(!root)return;
  root.innerHTML='';
  customPieces.forEach(p=>{
   const row=document.createElement('div');row.className='piece-choice';
   if(p.image){const img=document.createElement('img');img.src=p.image;row.append(img)}
-  else{const sym=document.createElement('span');sym.style.fontSize='30px';sym.textContent=p.glyph||'★';row.append(sym)}
+  else{const sym=document.createElement('span');sym.style.fontSize='26px';sym.textContent=p.glyph||'★';row.append(sym)}
   const name=document.createElement('b');name.textContent=p.name;row.append(name);
-  const choose=document.createElement('button');choose.type='button';choose.textContent=chosenCustom===p.id?'Выбрана':'Выбрать';choose.classList.toggle('active',chosenCustom===p.id);
+  const choose=document.createElement('button');choose.type='button';
+  choose.textContent=chosenCustom===p.id?'Выбрана':'Выбрать';
+  choose.classList.toggle('active',chosenCustom===p.id);
   bindTap(choose, ()=>chooseCustom(p.id));
   row.append(choose);
   root.append(row);
  });
 }
+
 function renderCustom(){
  const root=document.getElementById('myPieces');
  root.innerHTML='';
  if(!customPieces.length){
-  const empty=document.createElement('p');empty.className='small';
-  empty.textContent='Пока нет своих фигур. Создай первую ниже: укажи название, картинку и способ движения.';
-  root.append(empty);
+  root.innerHTML='<p class="small">Нет пользовательских фигур.</p>';
+  return;
  }
  customPieces.forEach(p=>{
   let box=document.createElement('div');
   box.className='upload-item';
   let img=document.createElement('img');img.src=p.image||'';if(!p.image)img.style.display='none';
   let title=document.createElement('b');title.textContent=p.name;
-  let description=document.createElement('span');
-  description.className='small';
-  description.textContent=p.movement+', дальность '+p.distance;
-  let use=document.createElement('button');
-  use.type='button';
-  use.textContent='Выбрать для доски';
+  let use=document.createElement('button');use.type='button';use.textContent='Выбрать';
   bindTap(use, ()=>chooseCustom(p.id));
-  let del=document.createElement('button');
-  del.type='button';
-  del.textContent='Удалить';
+  let del=document.createElement('button');del.type='button';del.textContent='Удалить';
   bindTap(del, ()=>{
    customPieces=customPieces.filter(x=>x.id!==p.id);
    localStorage.setItem('csPieces',JSON.stringify(customPieces));
    renderCustom();renderCustomPalette();draw();
   });
-  if(!p.image){let sym=document.createElement('div');sym.style.fontSize='34px';sym.textContent=p.glyph||'★';box.append(sym)}
-  box.append(img,title,description,use,del);
+  box.append(img,title,use,del);
   root.append(box);
  });
 }
+
 function createPiece(){
  const name=document.getElementById('pieceName').value.trim();
  const file=document.getElementById('pieceFile').files[0];
  const glyphValue=document.getElementById('pieceGlyph').value.trim()||'★';
- if(!name){alert('Укажи название фигуры.');return}
- if(file&&file.size>2*1024*1024){alert('Изображение должно быть не больше 2 МБ.');return}
+ if(!name){alert('Укажите название.');return}
  const save=image=>{
   const p={
    id:'piece_'+Date.now(),name,image:image||'',glyph:glyphValue,
@@ -701,8 +647,7 @@ function createPiece(){
    distance:Math.max(1,Math.min(8,Number(document.getElementById('pieceDistance').value)||1))
   };
   customPieces.push(p);
-  try{localStorage.setItem('csPieces',JSON.stringify(customPieces))}
-  catch(e){customPieces.pop();alert('Недостаточно места для сохранения.');return}
+  localStorage.setItem('csPieces',JSON.stringify(customPieces));
   document.getElementById('pieceName').value='';
   document.getElementById('pieceFile').value='';
   renderCustom();renderCustomPalette();autoSave();
@@ -710,10 +655,12 @@ function createPiece(){
  if(file){const reader=new FileReader();reader.onload=()=>save(reader.result);reader.readAsDataURL(file)}
  else save('');
 }
+
 function clearCreator(){
  document.getElementById('pieceName').value='';
  document.getElementById('pieceFile').value='';
 }
+
 function customCanMove(piece,dx,dy){
  const ax=Math.abs(dx),ay=Math.abs(dy),distance=Math.max(ax,ay);
  if(!distance||distance>piece.distance)return false;
@@ -727,6 +674,7 @@ function customCanMove(piece,dx,dy){
   default:return false;
  }
 }
+
 function customMoveIsValid(piece,fromX,fromY,toX,toY,position){
  const dx=toX-fromX,dy=toY-fromY;
  if(!customCanMove(piece,dx,dy))return false;
@@ -737,13 +685,16 @@ function customMoveIsValid(piece,fromX,fromY,toX,toY,position){
  for(let n=1;n<steps;n++){if(position[fromY+sy*n][fromX+sx*n])return false;}
  return true;
 }
+
 function clearBoard(){
  customBoard=Array.from({length:8},()=>Array(8).fill(null));
  draw();
 }
+
 function startPosition(){
  game.reset();customBoard=boardFromGame();freeHistory=[];selected=null;draw();
 }
+
 function startFromPosition(){
  let rows=customBoard.map(row=>{
   let s='',empty=0;
@@ -757,24 +708,22 @@ function startFromPosition(){
  });
  let next=new Chess();
  let fen=rows.join('/')+' '+document.getElementById('editTurn').value+' - - 0 1';
- if(!next.load(fen)){alert('Для обычной партии необходимы белый и чёрный короли.');return}
+ if(!next.load(fen)){alert('Нужны белый и чёрный короли.');return}
  game=next;setMode('normal');draw();
 }
+
 function copyFen(){
- if(mode!=='normal'){alert('FEN доступен в обычном шахматном режиме.');return}
- if(navigator.clipboard && navigator.clipboard.writeText){
-  navigator.clipboard.writeText(game.fen()).then(()=>alert('FEN скопирован!')).catch(()=>prompt('FEN:',game.fen()));
- } else {
-  prompt('FEN:',game.fen());
- }
+ if(mode!=='normal'){alert('Только в обычном режиме.');return}
+ navigator.clipboard?.writeText(game.fen()).then(()=>alert('FEN скопирован!'))||prompt('FEN:',game.fen());
 }
+
 function loadFen(){
- let f=prompt('Вставь FEN:');
+ let f=prompt('Вставьте FEN:');
  if(!f)return;
  let next=new Chess();
- if(next.load(f)){game=next;mode='normal';draw()}
- else alert('Неверный FEN');
+ if(next.load(f)){game=next;mode='normal';draw()}else alert('Ошибка FEN');
 }
+
 function appSnapshot(){
  return {
   version:1,mode,flipped,fen:game.fen(),pgn:game.pgn(),
@@ -785,133 +734,99 @@ function appSnapshot(){
   opponent
  };
 }
+
 function autoSave(){
  try{
   localStorage.setItem('csAutoSave',JSON.stringify(appSnapshot()));
-  const el=document.getElementById('saveStatus');if(el)el.textContent='✓ Автосохранено в браузере';
- }catch(e){
-  const el=document.getElementById('saveStatus');if(el)el.textContent='⚠ Не хватает места в хранилище. Скачай резервную копию.';
- }
+  document.getElementById('saveStatus').textContent='✓ Сохранено';
+ }catch(e){}
 }
+
 function restoreAutoSave(){
  try{
   const raw=localStorage.getItem('csAutoSave');if(!raw)return;
   const data=JSON.parse(raw);if(!data||data.version!==1)return;
-  if(data.pgn){const restored=new Chess();if(restored.load_pgn(data.pgn))game=restored;else if(data.fen)game.load(data.fen);}
-  else if(data.fen){const restored=new Chess();if(restored.load(data.fen))game=restored;}
-  if(Array.isArray(data.customBoard)&&data.customBoard.length===8)customBoard=data.customBoard;
+  if(data.fen)game.load(data.fen);
+  if(Array.isArray(data.customBoard))customBoard=data.customBoard;
   if(Array.isArray(data.customPieces))customPieces=data.customPieces;
-  if(data.freeTurn==='w'||data.freeTurn==='b')freeTurn=data.freeTurn;
-  if(data.customImages&&typeof data.customImages==='object')customImages=data.customImages;
-  if(['default','cheq','dilena','custom'].includes(data.pieceSetTheme))pieceSetTheme=data.pieceSetTheme;
-  if(typeof data.customPieceFolder==='string')customPieceFolder=data.customPieceFolder;
-  if(['normal','free','edit'].includes(data.mode))mode=data.mode;
-  flipped=!!data.flipped;
-  if(data.opponent)opponent=data.opponent;
-  if(data.light&&data.dark){
-   document.documentElement.style.setProperty('--light',data.light);
-   document.documentElement.style.setProperty('--dark',data.dark);
-  }
+  if(data.pieceSetTheme)pieceSetTheme=data.pieceSetTheme;
+  if(data.customPieceFolder)customPieceFolder=data.customPieceFolder;
+  if(data.light&&data.dark)setTheme(data.light,data.dark);
   const inp = document.getElementById('customPieceFolder');
   if(inp) inp.value = customPieceFolder;
- }catch(e){console.warn('Не удалось восстановить автосохранение',e);}
+ }catch(e){}
 }
+
 function downloadBlob(blob,name){
  const url=URL.createObjectURL(blob),a=document.createElement('a');
  a.href=url;a.download=name;document.body.appendChild(a);a.click();a.remove();
  setTimeout(()=>URL.revokeObjectURL(url),1500);
 }
+
 function exportBackup(){
- const data={...appSnapshot(),savedPositions};
- downloadBlob(new Blob([JSON.stringify(data,null,2)],{type:'application/json'}),'chess-studio-backup.json');
+ downloadBlob(new Blob([JSON.stringify(appSnapshot(),null,2)],{type:'application/json'}),'chess-backup.json');
 }
+
 function importBackup(event){
- const file=event.target.files&&event.target.files[0];if(!file)return;
- const reader=new FileReader();reader.onload=()=>{
+ const file=event.target.files?.[0];if(!file)return;
+ const reader=new FileReader();
+ reader.onload=()=>{
   try{
-   const d=JSON.parse(reader.result);if(!d||!d.version)throw Error('Неверный файл копии');
-   if(d.pgn){const g=new Chess();if(g.load_pgn(d.pgn))game=g;else if(d.fen){const g2=new Chess();if(!g2.load(d.fen))throw Error('Неверная партия');game=g2;}}
-   else if(d.fen){const g=new Chess();if(!g.load(d.fen))throw Error('Неверный FEN');game=g;}
-   if(Array.isArray(d.customBoard)&&d.customBoard.length===8)customBoard=d.customBoard;
-   if(Array.isArray(d.customPieces))customPieces=d.customPieces;
-   if(d.freeTurn==='w'||d.freeTurn==='b')freeTurn=d.freeTurn;
-   if(d.customImages&&typeof d.customImages==='object')customImages=d.customImages;
-   if(['default','cheq','dilena','custom'].includes(d.pieceSetTheme))pieceSetTheme=d.pieceSetTheme;
-   if(typeof d.customPieceFolder==='string')customPieceFolder=d.customPieceFolder;
-   if(['normal','free','edit'].includes(d.mode))mode=d.mode;
-   flipped=!!d.flipped;if(Array.isArray(d.savedPositions))savedPositions=d.savedPositions;
-   localStorage.setItem('csPieces',JSON.stringify(customPieces));
-   localStorage.setItem('csImages',JSON.stringify(customImages));
-   localStorage.setItem('csSavedPositions',JSON.stringify(savedPositions));
+   const d=JSON.parse(reader.result);
+   if(d.fen)game.load(d.fen);
+   if(d.customBoard)customBoard=d.customBoard;
+   if(d.customPieces){customPieces=d.customPieces;localStorage.setItem('csPieces',JSON.stringify(customPieces));}
+   if(d.pieceSetTheme)pieceSetTheme=d.pieceSetTheme;
+   if(d.customPieceFolder)customPieceFolder=d.customPieceFolder;
    if(d.light&&d.dark)setTheme(d.light,d.dark);
-   selected=null;updatePieceSetUI();showTab(mode==='free'?'pieces':mode==='edit'?'edit':'game');draw();
-   alert('Резервная копия загружена!');
-  }catch(err){alert('Не удалось загрузить копию: '+err.message)}
+   updatePieceSetUI();draw();
+   alert('Загружено!');
+  }catch(e){alert('Ошибка файла бэкапа');}
   event.target.value='';
  };
  reader.readAsText(file);
 }
+
 function saveNamedPosition(){
- const name=prompt('Название сохранения:','Моя позиция');if(!name||!name.trim())return;
- const item={id:Date.now(),name:name.trim(),snapshot:appSnapshot(),date:new Date().toLocaleString()};
- savedPositions.unshift(item);
- try{localStorage.setItem('csSavedPositions',JSON.stringify(savedPositions));alert('Позиция сохранена!');}
- catch(e){savedPositions.shift();alert('Не удалось сохранить: закончилось место. Скачай резервную копию.');}
+ const name=prompt('Название:','Позиция 1');if(!name)return;
+ savedPositions.unshift({name,snapshot:appSnapshot(),date:new Date().toLocaleString()});
+ localStorage.setItem('csSavedPositions',JSON.stringify(savedPositions));
+ alert('Сохранено!');
 }
+
 function showSavedPositions(){
- if(!savedPositions.length){alert('Сохранений пока нет.');return;}
- const menu=savedPositions.map((x,i)=>(i+1)+'. '+x.name+' ('+x.date+')').join('\n');
- const answer=prompt('Введи номер сохранения для загрузки:\n'+menu);if(answer===null)return;
- const index=Number(answer)-1;if(!Number.isInteger(index)||!savedPositions[index]){alert('Неверный номер.');return}
- const d=savedPositions[index].snapshot;
- try{
-  if(d.pgn){const g=new Chess();if(g.load_pgn(d.pgn))game=g;else if(d.fen){const g2=new Chess();if(g2.load(d.fen))game=g2;}}
-  else if(d.fen){const g=new Chess();if(!g.load(d.fen))throw Error('FEN повреждён');game=g;}
+ if(!savedPositions.length){alert('Пусто.');return;}
+ let menu=savedPositions.map((x,i)=>(i+1)+'. '+x.name).join('\n');
+ let ans=prompt('Номер для загрузки:\n'+menu);
+ if(!ans)return;
+ let idx=Number(ans)-1;
+ if(savedPositions[idx]){
+  let d=savedPositions[idx].snapshot;
+  if(d.fen)game.load(d.fen);
   customBoard=d.customBoard||customBoard;
-  customPieces=d.customPieces||customPieces;
-  customImages=d.customImages||customImages;
-  if(d.freeTurn==='w'||d.freeTurn==='b')freeTurn=d.freeTurn;
-  if(d.pieceSetTheme)pieceSetTheme=d.pieceSetTheme;
-  if(d.customPieceFolder)customPieceFolder=d.customPieceFolder;
-  mode=d.mode||'normal';flipped=!!d.flipped;
-  if(d.light&&d.dark)setTheme(d.light,d.dark);
-  selected=null;updatePieceSetUI();showTab(mode==='free'?'pieces':mode==='edit'?'edit':'game');draw();
- }catch(e){alert('Не удалось открыть сохранение.');}
+  draw();
+ }
 }
+
 async function exportBoardPNG(){
  const data=currentData(),canvas=document.createElement('canvas'),size=120,margin=32;
  canvas.width=canvas.height=size*8+margin;
  const ctx=canvas.getContext('2d');
- ctx.fillStyle='#ffffff';ctx.fillRect(0,0,canvas.width,canvas.height);
+ ctx.fillStyle='#fff';ctx.fillRect(0,0,canvas.width,canvas.height);
  const light=getComputedStyle(document.documentElement).getPropertyValue('--light').trim()||'#e8d9bd';
  const dark=getComputedStyle(document.documentElement).getPropertyValue('--dark').trim()||'#77966b';
- const imageCache={};
  for(let y=0;y<8;y++)for(let x=0;x<8;x++){
-  const r=flipped?7-y:y,c=flipped?7-x:x,item=data[r][c],px=margin/2+x*size,py=margin/2+y*size;
+  let r=flipped?7-y:y,c=flipped?7-x:x,item=data[r][c],px=margin/2+x*size,py=margin/2+y*size;
   ctx.fillStyle=((r+c)%2)?dark:light;ctx.fillRect(px,py,size,size);
-  if(!item)continue;
-  const id=item.custom?item.id:null,imgSrc=id?customPieces.find(p=>p.id===id)?.image:getStandardPieceImage(item.type);
-  if(imgSrc){
-   try{
-    let img=imageCache[imgSrc];
-    if(!img){img=new Image();img.src=imgSrc;await new Promise((resolve,reject)=>{img.onload=resolve;img.onerror=reject;});imageCache[imgSrc]=img;}
-    ctx.drawImage(img,px+7,py+7,size-14,size-14);continue;
-   }catch(e){}
+  if(item){
+   ctx.textAlign='center';ctx.textBaseline='middle';ctx.font='80px sans-serif';
+   ctx.fillStyle=item.color==='b'?'#171717':'#fff';
+   ctx.fillText(glyph[item.type]||'★',px+size/2,py+size/2);
   }
-  ctx.textAlign='center';ctx.textBaseline='middle';ctx.font='90px "Segoe UI Symbol",serif';
-  ctx.fillStyle=item.color==='b'||(item.type&&item.type===item.type.toLowerCase())?'#171717':'#fffdf4';
-  ctx.strokeStyle=item.color==='b'||(item.type&&item.type===item.type.toLowerCase())?'#eee8dc':'#282828';
-  ctx.lineWidth=2;
-  const symbol=id?(customPieces.find(p=>p.id===id)?.glyph||'★'):glyph[item.type]||'?';
-  ctx.strokeText(symbol,px+size/2,py+size/2+3);
-  ctx.fillText(symbol,px+size/2,py+size/2+3);
  }
- ctx.fillStyle='#222';ctx.font='18px Arial';ctx.textAlign='center';
- for(let x=0;x<8;x++)ctx.fillText(files[flipped?7-x:x],margin/2+x*size+size/2,canvas.height-7);
- ctx.textAlign='left';
- for(let y=0;y<8;y++)ctx.fillText(String(flipped?y+1:8-y),4,margin/2+y*size+size/2+6);
- canvas.toBlob(blob=>{if(blob)downloadBlob(blob,'chess-board.png');else alert('Не удалось создать PNG.');},'image/png');
+ canvas.toBlob(blob=>downloadBlob(blob,'board.png'),'image/png');
 }
+
 function setTheme(light,dark){
  document.documentElement.style.setProperty('--light',light);
  document.documentElement.style.setProperty('--dark',dark);
@@ -919,49 +834,16 @@ function setTheme(light,dark){
  document.getElementById('darkColor').value=dark;
  autoSave();
 }
-function setCustomTheme(){
- setTheme(document.getElementById('lightColor').value,document.getElementById('darkColor').value);
-}
+
 function fullScreen(){
- if(!document.fullscreenElement){
-  const el = document.documentElement;
-  if(el.requestFullscreen) el.requestFullscreen().catch(()=>{});
-  else if(el.webkitRequestFullscreen) el.webkitRequestFullscreen();
- } else {
-  if(document.exitFullscreen) document.exitFullscreen().catch(()=>{});
-  else if(document.webkitExitFullscreen) document.webkitExitFullscreen();
- }
+ if(!document.fullscreenElement)document.documentElement.requestFullscreen?.().catch(()=>{});
+ else document.exitFullscreen?.().catch(()=>{});
 }
-function renderStandardUploads(){
- let root=document.getElementById('standardUploads');
- if(root.children.length)return;
- Object.keys(glyph).forEach(p=>{
-  let box=document.createElement('div');box.className='upload-item';
-  let label=document.createElement('label');label.textContent=names[p]+' ('+pieceFileMap[p]+')';
-  let input=document.createElement('input');
-  input.type='file';input.accept='image/png,image/jpeg,image/webp';
-  input.onchange=()=>{
-   let file=input.files[0];if(!file)return;
-   if(file.size>2*1024*1024){alert('Максимум 2 МБ');return}
-   let reader=new FileReader();
-   reader.onload=()=>{
-    customImages[p]=reader.result;
-    pieceSetTheme='default';
-    updatePieceSetUI();
-    try{localStorage.setItem('csImages',JSON.stringify(customImages))}
-    catch(e){alert('Не удалось сохранить изображение.');return}
-    draw();autoSave();
-   };
-   reader.readAsDataURL(file);
-  };
-  box.append(label,input);root.append(box);
- });
-}
+
 const standardPalette=document.getElementById('standardPalette');
 Object.keys(glyph).forEach(p=>{
  let b=document.createElement('button');
- b.type='button';
- b.className='palette-piece';b.textContent=glyph[p];
+ b.type='button';b.className='palette-piece';b.textContent=glyph[p];
  bindTap(b, ()=>{
   chooseStandard(p);
   document.querySelectorAll('#standardPalette button').forEach(x=>x.classList.remove('active'));
@@ -969,10 +851,12 @@ Object.keys(glyph).forEach(p=>{
  });
  standardPalette.append(b);
 });
+
 function setOpponent(v){
  opponent=v;
- document.getElementById('engineStatus').textContent=v==='engine'?'Игра против движка':'Два игрока';
+ document.getElementById('engineStatus').textContent=v==='engine'?'Stockfish активен':'Два игрока';
 }
+
 function connectEngine(){
  if(engine)return;
  try{
@@ -980,38 +864,30 @@ function connectEngine(){
   engine.onmessage=e=>{
    let msg=String(e.data);
    if(msg==='uciok')engine.postMessage('isready');
-   if(msg==='readyok'){
-    engineReady=true;
-    document.getElementById('engineStatus').textContent='Stockfish подключён';
-   }
+   if(msg==='readyok'){engineReady=true;document.getElementById('engineStatus').textContent='Stockfish готов';}
    if(msg.startsWith('bestmove')){
     thinking=false;
     let uci=msg.split(' ')[1];
     if(uci&&uci!=='(none)'){
-     let move={from:uci.slice(0,2),to:uci.slice(2,4)};
-     if(uci.length>4)move.promotion=uci[4];
-     let result=game.move(move);
-     if(result)lastMove=[result.from,result.to];
+     let res=game.move({from:uci.slice(0,2),to:uci.slice(2,4),promotion:uci[4]});
+     if(res)lastMove=[res.from,res.to];
     }
     draw();
    }
   };
-  engine.onerror=()=>{
-   engine=null;
-   document.getElementById('engineStatus').textContent='Ошибка загрузки движка';
-  };
   engine.postMessage('uci');
- }catch(e){alert('Не удалось подключить Stockfish')}
+ }catch(e){alert('Ошибка Stockfish')}
 }
+
 function engineMove(){
- if(!engineReady){connectEngine();return}
+ if(!engineReady){connectEngine();return;}
  if(mode!=='normal'||thinking||game.game_over())return;
  thinking=true;
  engine.postMessage('position fen '+game.fen());
  engine.postMessage('go depth '+document.getElementById('difficulty').value);
 }
 
-/* Привязка всех статических кнопок через bindTap */
+/* Привязка всех кнопок через data-action к тач-событиям */
 const actions = {
  'tab-game': () => showTab('game'),
  'tab-pieces': () => showTab('pieces'),
@@ -1039,21 +915,15 @@ const actions = {
  'tool-place': () => setFreeTool('place'),
  'tool-move': () => setFreeTool('move'),
  'piece-set-default': () => setPieceSetTheme('default'),
- 'piece-set-cheq': () => setPieceSetTheme('cheq'),
+ 'piece-set-cheq': () => setPieceSetTheme('piece-set-cheq'=== 'piece-set-cheq' ? 'cheq' : 'default'), // упрощено ниже
  'piece-set-dilena': () => setPieceSetTheme('dilena'),
  'piece-set-custom': () => {
-  const folder = document.getElementById('customPieceFolder').value.trim();
-  if(!folder){
-   const prompted = prompt('Введи имя папки с фигурами (рядом со скриптом):', customPieceFolder || 'custom_pieces');
-   if(prompted) setPieceSetTheme('custom', prompted);
-  } else {
-   setPieceSetTheme('custom', folder);
-  }
+  let f = document.getElementById('customPieceFolder').value.trim();
+  setPieceSetTheme('custom', f || 'custom_pieces');
  },
  'apply-custom-folder': () => {
-  const folder = document.getElementById('customPieceFolder').value.trim();
-  if(!folder){ alert('Укажи название папки.'); return; }
-  setPieceSetTheme('custom', folder);
+  let f = document.getElementById('customPieceFolder').value.trim();
+  if(f) setPieceSetTheme('custom', f);
  },
  'theme-classic': () => setTheme('#e8d9bd','#77966b'),
  'theme-gray': () => setTheme('#eeeeee','#555555'),
@@ -1067,19 +937,22 @@ const actions = {
  'edit-play': () => startFromPosition()
 };
 
+/* Точное переопределение для тем чех/дилена */
+actions['piece-set-cheq'] = () => setPieceSetTheme('cheq');
+actions['piece-set-dilena'] = () => setPieceSetTheme('dilena');
+
 document.querySelectorAll('[data-action]').forEach(btn => {
  const act = btn.getAttribute('data-action');
  if(actions[act]) bindTap(btn, actions[act]);
 });
 
 document.getElementById('backupFile').addEventListener('change', importBackup);
-document.getElementById('lightColor').addEventListener('change', setCustomTheme);
-document.getElementById('darkColor').addEventListener('change', setCustomTheme);
+document.getElementById('lightColor').addEventListener('change', e=>setTheme(e.target.value, document.getElementById('darkColor').value));
+document.getElementById('darkColor').addEventListener('change', e=>setTheme(document.getElementById('lightColor').value, e.target.value));
 
 customBoard=boardFromGame();
 restoreAutoSave();
 updatePieceSetUI();
-document.addEventListener('keydown',e=>{if(e.key==='Escape')cancelPieceSelection()});
 draw();
 showTab(mode==='free'?'pieces':mode==='edit'?'edit':'game');
 </script>
