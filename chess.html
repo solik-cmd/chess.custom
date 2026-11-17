@@ -1,0 +1,876 @@
+
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<title>Chess Studio 4.0 — Custom Chess</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/chess.js/0.10.3/chess.min.js"></script>
+<style>
+:root{
+ --bg:#0d131b;--panel:#182331;--panel2:#243448;--accent:#65e0ad;
+ --light:#eee4ce;--dark:#789b76;--board-edge:#34475a;--muted:#9eafc2;
+}
+*{box-sizing:border-box}
+html{width:100%;min-height:100%;-webkit-text-size-adjust:100%}
+body{
+ margin:0;min-height:100vh;width:100%;overflow-x:hidden;
+ background:radial-gradient(ellipse at 20% -10%,#1b3c36 0,transparent 35%),var(--bg);
+ color:#edf3fa;font-family:Inter,Segoe UI,Arial,sans-serif;
+}
+header{
+ background:#172330ed;padding:14px 20px;display:flex;
+ justify-content:space-between;align-items:center;gap:10px;
+ flex-wrap:wrap;border-bottom:1px solid #344052;
+ position:sticky;top:0;z-index:5;backdrop-filter:blur(12px);
+}
+.logo{font-size:22px;color:var(--accent);font-weight:bold}
+main{
+ width:100%;max-width:1380px;margin:20px auto;padding:12px 18px;
+ display:grid;grid-template-columns:minmax(0,1.2fr) minmax(280px,.8fr);
+ gap:20px;align-items:start;
+}
+.panel{
+ background:linear-gradient(180deg,#1a2938,#151f2b);
+ border:1px solid #34475a;border-radius:16px;padding:17px;
+ min-width:0;box-shadow:0 14px 36px #0003;
+}
+#board{
+ display:grid;grid-template-columns:repeat(8,minmax(0,1fr));
+ width:100%;max-width:720px;margin:auto;aspect-ratio:1;
+ overflow:hidden;border:5px solid var(--board-edge);
+ border-radius:10px;box-shadow:0 15px 38px #0005;
+ touch-action:manipulation;
+}
+.square{
+ aspect-ratio:1;display:flex;align-items:center;justify-content:center;
+ position:relative;cursor:pointer;overflow:hidden;user-select:none;
+ -webkit-tap-highlight-color:transparent;
+}
+.light{background:var(--light)}
+.dark{background:var(--dark)}
+.selected{box-shadow:inset 0 0 0 4px #f5ce48;z-index:1}
+.last-move{background-image:linear-gradient(#f5d45a55,#f5d45a55)}
+.legal-target:after{
+ content:'';position:absolute;width:24%;height:24%;
+ border-radius:50%;background:#176b4eaa;
+}
+.legal-target.has-piece:after{
+ width:82%;height:82%;background:transparent;
+ border:5px solid #176b4eaa;
+}
+.piece{width:90%;height:90%;object-fit:contain;pointer-events:none}
+.glyph{
+ font-size:clamp(22px,6vw,65px);line-height:1;
+ pointer-events:none;filter:drop-shadow(0 2px 1px #0004);
+}
+button,select,input,textarea{
+ background:var(--panel2);color:#edf3fa;
+ border:1px solid #46566b;border-radius:7px;
+ padding:10px;max-width:100%;font:inherit;
+}
+button{cursor:pointer;touch-action:manipulation}
+button:hover{border-color:var(--accent)}
+button.active{background:#247b55;border-color:var(--accent)}
+button:disabled{opacity:.4}
+.row{display:flex;flex-wrap:wrap;gap:6px;margin:10px 0}
+.row>*{max-width:100%}
+h2{font-size:17px;color:var(--accent)}
+h3{font-size:14px;color:#cbd8e5}
+.small{font-size:12px;color:var(--muted);line-height:1.6}
+#status{padding:12px;background:var(--panel2);border-radius:8px;margin-bottom:12px}
+#moves{max-height:140px;overflow:auto;line-height:1.8}
+#palette{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:5px}
+.palette-piece{font-size:clamp(20px,4vw,30px);padding:7px;min-width:0}
+.palette-piece.active{outline:2px solid var(--accent);background:#24533f}
+.upload-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+.upload-item{
+ padding:9px;background:var(--panel2);border-radius:8px;
+ display:flex;flex-direction:column;gap:6px;min-width:0;
+}
+.upload-item img{width:48px;height:48px;object-fit:contain}
+.piece-choice{
+ display:flex;align-items:center;gap:8px;padding:8px;
+ background:var(--panel2);border:1px solid #46566b;
+ border-radius:8px;margin:5px 0;min-width:0;
+}
+.piece-choice img{width:38px;height:38px;object-fit:contain}
+.piece-choice button{margin-left:auto}
+.field-note{font-size:11px;color:var(--muted)}
+.section{display:none}
+.theme-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px}
+.theme-button{height:55px}
+label{font-size:13px}
+input[type=text],input[type=number]{width:100%;min-width:0}
+input[type=file]{width:100%;font-size:11px}
+input[type=color]{max-width:100%}
+#gameTab,#piecesTab,#designTab,#editTab{min-width:0}
+#saveStatus{overflow-wrap:anywhere}
+img{max-width:100%}
+
+/* Планшеты */
+@media(max-width:900px){
+ main{
+  grid-template-columns:minmax(0,1fr);
+  max-width:760px;margin:8px auto;padding:10px;
+ }
+ header{padding:12px 15px}
+ .panel{padding:14px}
+ #board{max-width:min(100%,650px)}
+}
+
+/* Телефоны */
+@media(max-width:600px){
+ header{
+  position:relative;padding:10px 12px;
+  align-items:flex-start;
+ }
+ .logo{font-size:19px}
+ header .row{width:100%;margin:5px 0 0}
+ header button{flex:1;padding:9px 6px;font-size:12px}
+ main{padding:7px;gap:10px;margin:5px auto}
+ .panel{padding:10px;border-radius:12px}
+ #board{border-width:3px;border-radius:5px}
+ .square{min-width:0}
+ .glyph{font-size:clamp(20px,8vw,42px)}
+ .row{gap:5px}
+ .row button{flex:1 1 auto;font-size:13px;padding:9px 7px}
+ #palette{grid-template-columns:repeat(4,minmax(0,1fr))}
+ .palette-piece{font-size:26px;padding:8px 3px}
+ .upload-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+ .piece-choice{flex-wrap:wrap}
+ .piece-choice button{margin-left:0}
+ h2{font-size:16px}
+ input,select{font-size:16px}
+}
+
+/* Очень узкие телефоны */
+@media(max-width:360px){
+ main{padding:4px}
+ .panel{padding:8px}
+ .logo{font-size:17px}
+ #board{border-width:2px}
+ .glyph{font-size:20px}
+ .row button{font-size:12px;padding:8px 5px}
+ #palette{grid-template-columns:repeat(3,minmax(0,1fr))}
+ .upload-grid{grid-template-columns:1fr}
+}
+
+/* Большие мониторы */
+@media(min-width:1400px){
+ main{max-width:1500px}
+ #board{max-width:760px}
+}
+
+/* Сенсорное управление */
+@media(hover:none){
+ button:hover{transform:none}
+ button{min-height:40px}
+ .square{touch-action:manipulation}
+}
+</style>
+</head>
+<body>
+
+<header>
+ <div class="logo">♟ Chess Studio 4.0</div>
+ <div class="row">
+  <button onclick="showTab('game')">Игра</button>
+  <button onclick="showTab('pieces')">Мои фигуры</button>
+  <button onclick="showTab('design')">Дизайн</button>
+  <button onclick="fullScreen()">⛶</button>
+ </div>
+</header>
+
+<main>
+<section class="panel">
+ <div id="status">Готово</div>
+ <div id="board"></div>
+
+ <div class="row">
+  <button onclick="undo()">↶ Назад</button>
+  <button onclick="resetGame()">⟳ Новая партия</button>
+  <button onclick="flipBoard()">⇅ Перевернуть</button>
+ </div>
+
+ <div class="row">
+  <button id="normalBtn" class="active" onclick="setMode('normal')">Шахматы</button>
+  <button id="freeBtn" onclick="setMode('free')">Свободный режим</button>
+  <button id="editBtn" onclick="setMode('edit')">Редактор доски</button>
+ </div>
+
+ <div class="row">
+  <button onclick="copyFen()">📋 Копировать FEN</button>
+  <button onclick="loadFen()">Загрузить FEN</button>
+  <button onclick="saveNamedPosition()">💾 Сохранить позицию</button>
+  <button onclick="showSavedPositions()">📂 Мои сохранения</button>
+  <button onclick="exportBoardPNG()">🖼 Сохранить доску PNG</button>
+  <button onclick="exportBackup()">⬇ Резервная копия</button>
+  <button onclick="document.getElementById('backupFile').click()">⬆ Загрузить копию</button>
+  <input id="backupFile" type="file" accept="application/json,.json" style="display:none" onchange="importBackup(event)">
+ </div>
+ <p class="small">Автосохранение включено: партия, доска, темы, собственные фигуры и загруженные изображения сохраняются в этом браузере. PNG сохраняет текущую доску как картинку.</p>
+ <p class="small" id="saveStatus">Автосохранение готово.</p>
+</section>
+
+<aside class="panel">
+
+<div id="gameTab">
+ <h2>🎮 Игра</h2>
+ <div class="row">
+  <button onclick="setOpponent('human')">Два игрока</button>
+  <button onclick="setOpponent('engine')">Stockfish</button>
+ </div>
+ <label>Сложность движка</label>
+ <select id="difficulty">
+  <option value="2">Лёгкая</option>
+  <option value="5" selected>Средняя</option>
+  <option value="10">Сильная</option>
+  <option value="15">Максимальная</option>
+ </select>
+ <div class="row">
+  <button onclick="connectEngine()">Подключить движок</button>
+  <button onclick="engineMove()">Ход Stockfish</button>
+ </div>
+ <p class="small" id="engineStatus">Движок не подключён.</p>
+ <h2>📜 История ходов</h2>
+ <div id="moves">Ходов нет.</div>
+</div>
+
+<div id="piecesTab" class="section">
+ <h2>🧩 Мои фигуры</h2>
+ <p class="small">Создавай собственные фигуры с уникальными изображениями и правилами передвижения.</p>
+ <div id="myPieces" class="upload-grid"></div>
+ <h2>＋ Создать фигуру</h2>
+ <label>Название</label>
+ <input id="pieceName" type="text" placeholder="Например: Дракон">
+ <label>Символ фигуры</label>
+ <input id="pieceGlyph" type="text" value="★" maxlength="4">
+ <label>Цвет фигуры</label>
+ <input id="pieceColor" type="color" value="#ffffff">
+ <label>Изображение</label>
+ <input id="pieceFile" type="file" accept="image/png,image/jpeg,image/webp">
+ <label>Способ движения</label>
+ <select id="pieceMovement">
+  <option value="all">В любую сторону</option>
+  <option value="straight">По прямой</option>
+  <option value="diagonal">По диагонали</option>
+  <option value="knight">Как конь</option>
+  <option value="one">На одну клетку</option>
+  <option value="rook">Как ладья</option>
+  <option value="bishop">Как слон</option>
+  <option value="king">Как король</option>
+  <option value="queen">Как ферзь</option>
+ </select>
+ <label>Максимальная дальность</label>
+ <input id="pieceDistance" type="number" min="1" max="8" value="8">
+ <div class="row">
+  <button onclick="createPiece()">Сохранить фигуру</button>
+  <button onclick="clearCreator()">Очистить</button>
+ </div>
+ <h2>Установка фигур</h2>
+ <p class="small">Выбери фигуру и нажми «Режим установки», чтобы добавить её на доску. Для перемещения уже установленных фигур включи «Режим перемещения».</p>
+ <div class="row">
+  <button id="placeCustomBtn" class="active" onclick="setFreeTool('place')">＋ Режим установки</button>
+  <button id="moveCustomBtn" onclick="setFreeTool('move')">↔ Режим перемещения</button>
+ </div>
+ <p class="small" id="pieceToolStatus">Выбери фигуру ниже, затем нажми на клетку доски.</p>
+ <div id="customPalette"></div>
+</div>
+
+<div id="designTab" class="section">
+ <h2>🎨 Оформление</h2>
+ <div class="theme-grid">
+  <button onclick="setTheme('#e8d9bd','#77966b')">Classic</button>
+  <button onclick="setTheme('#eeeeee','#555555')">Gray</button>
+  <button onclick="setTheme('#f1d7a2','#a56a3e')">Wood</button>
+  <button onclick="setTheme('#d8e6ef','#5b85ae')">Ocean</button>
+  <button onclick="setTheme('#e9d7ef','#78528c')">Purple</button>
+  <button onclick="setTheme('#d7e9d0','#376e51')">Forest</button>
+ </div>
+ <h3>Свои цвета</h3>
+ <label>Светлые клетки <input type="color" id="lightColor" value="#e8d9bd" onchange="setCustomTheme()"></label>
+ <label>Тёмные клетки <input type="color" id="darkColor" value="#77966b" onchange="setCustomTheme()"></label>
+ <h3>Изображения стандартных фигур</h3>
+ <div id="standardUploads" class="upload-grid"></div>
+</div>
+
+<div id="editTab" class="section">
+ <h2>🛠 Редактор доски</h2>
+ <div id="standardPalette"></div>
+ <div class="row">
+  <button onclick="chooseStandard('')">Ластик</button>
+  <button onclick="clearBoard()">Очистить доску</button>
+  <button onclick="startPosition()">Начальная позиция</button>
+ </div>
+ <label>Кто ходит первым</label>
+ <select id="editTurn">
+  <option value="w">Белые</option>
+  <option value="b">Чёрные</option>
+ </select>
+ <button onclick="startFromPosition()">Играть с этой позиции</button>
+</div>
+
+</aside>
+</main>
+
+<script>
+const glyph={
+ K:'♔',Q:'♕',R:'♖',B:'♗',N:'♘',P:'♙',
+ k:'♚',q:'♛',r:'♜',b:'♝',n:'♞',p:'♟'
+};
+const names={
+ K:'Белый король',Q:'Белый ферзь',R:'Белая ладья',B:'Белый слон',N:'Белый конь',P:'Белая пешка',
+ k:'Чёрный король',q:'Чёрный ферзь',r:'Чёрная ладья',b:'Чёрный слон',n:'Чёрный конь',p:'Чёрная пешка'
+};
+const files='abcdefgh';
+let game=new Chess();
+let mode='normal',selected=null,flipped=false;
+let opponent='human',engine=null,engineReady=false,thinking=false;
+let customPieces=[];
+let customImages={};
+let customBoard=Array.from({length:8},()=>Array(8).fill(null));
+let chosenCustom=null,chosenStandard='P';
+let freeTool='place',freeHistory=[],lastMove=null,freeTurn='w';
+let savedPositions=[];
+try{savedPositions=JSON.parse(localStorage.getItem('csSavedPositions')||'[]')}catch(e){savedPositions=[];}
+try{customPieces=JSON.parse(localStorage.getItem('csPieces')||'[]')}catch(e){}
+try{customImages=JSON.parse(localStorage.getItem('csImages')||'{}')}catch(e){}
+
+function showTab(t){
+ const map={game:'gameTab',pieces:'piecesTab',design:'designTab',edit:'editTab'};
+ Object.values(map).forEach(id=>{const el=document.getElementById(id);if(el)el.style.display='none';});
+ const target=document.getElementById(map[t]||'gameTab');
+ if(target)target.style.display='block';
+ if(t==='pieces')renderCustom();
+ if(t==='design')renderStandardUploads();
+}
+
+function boardFromGame(){
+ return game.board().map(row=>row.map(p=>p?{type:p.color==='w'?p.type.toUpperCase():p.type,custom:false,color:p.color}:null));
+}
+function setMode(m){
+ if(m==='free'&&mode!=='free'&&mode!=='edit')customBoard=boardFromGame();
+ mode=m;selected=null;chosenCustom=null;
+ document.getElementById('normalBtn').classList.toggle('active',m==='normal');
+ document.getElementById('freeBtn').classList.toggle('active',m==='free');
+ document.getElementById('editBtn').classList.toggle('active',m==='edit');
+ if(m==='edit')showTab('edit');
+ else if(m==='free')showTab('pieces');
+ else showTab('game');
+ draw();
+}
+function currentData(){
+ if(mode==='free'||mode==='edit')return customBoard;
+ return game.board().map(row=>row.map(p=>p?{type:p.color==='w'?p.type.toUpperCase():p.type,custom:false,color:p.color}:null));
+}
+function draw(){
+ const board=document.getElementById('board');
+ board.innerHTML='';
+ const data=currentData();
+ for(let y=0;y<8;y++)for(let x=0;x<8;x++){
+  let r=flipped?7-y:y,c=flipped?7-x:x;
+  let sq=files[c]+(8-r);
+  let cell=document.createElement('div');
+  cell.className='square '+((r+c)%2?'dark':'light');
+  if(selected===sq)cell.classList.add('selected');
+  let item=data[r][c];
+  if(item){
+   let id=item.custom?item.id:null;
+   let image=id?customPieces.find(p=>p.id===id)?.image:customImages[item.type];
+   if(image){
+    let img=document.createElement('img');
+    img.src=image;img.className='piece';cell.append(img);
+   }else{
+    let span=document.createElement('span');
+    span.className='glyph';
+    span.textContent=id?(customPieces.find(p=>p.id===id)?.glyph||'★'):glyph[item.type]||'?';
+    span.style.color=(item.color==='b'||(item.type&&item.type===item.type.toLowerCase()))?'#171717':'#fffdf4';
+    span.style.textShadow=(item.color==='b'||(item.type&&item.type===item.type.toLowerCase()))?'0 1px 2px #fff':'0 1px 3px #000';
+    cell.append(span);
+   }
+  }
+  if(lastMove&&mode==='normal'&&(sq===lastMove[0]||sq===lastMove[1]))cell.classList.add('last-move');
+  if(mode==='free'&&selected){
+   const from=coordinate(selected),moving=customBoard[from.r][from.c];
+   if(moving&&moving.custom){
+    const cp=customPieces.find(p=>p.id===moving.id);
+    if(cp&&customMoveIsValid(cp,from.c,from.r,c,r,customBoard))cell.classList.add('legal-target');
+   }
+  }
+  cell.onclick=()=>clickCell(sq);
+  board.append(cell);
+ }
+ updateStatus();
+ autoSave();
+}
+function updateStatus(){
+ let status=document.getElementById('status');
+ if(mode==='free')status.textContent='⚡ Свободный режим — можно расставлять и перемещать фигуры.';
+ else if(mode==='edit')status.textContent='🛠 Редактор доски';
+ else status.textContent=game.isCheckmate()?'Мат!':game.isDraw()?'Ничья':game.isCheck()?'Шах!':game.turn()==='w'?'Ход белых':'Ход чёрных';
+ if(mode==='normal'){
+  let h=game.history(),out='';
+  for(let i=0;i<h.length;i+=2)out+=(i/2+1)+'. '+h[i]+' '+(h[i+1]||'')+'<br>';
+  document.getElementById('moves').innerHTML=out||'Ходов нет.';
+ }
+}
+function coordinate(sq){return {r:8-Number(sq[1]),c:files.indexOf(sq[0])};}
+
+function clickCell(sq){
+ if(thinking)return;
+ let {r,c}=coordinate(sq);
+ if(mode==='edit'){
+  customBoard[r][c]=chosenStandard?{type:chosenStandard,custom:false,color:chosenStandard===chosenStandard.toUpperCase()?'w':'b'}:null;
+  draw();return;
+ }
+ if(mode==='free'){
+  if(freeTool==='place'){
+   if(chosenCustom){
+    pushFreeHistory();
+    customBoard[r][c]={custom:true,id:chosenCustom,color:document.getElementById('pieceColor').value};
+    draw();return;
+   }
+   if(chosenStandard){
+    pushFreeHistory();
+    customBoard[r][c]={type:chosenStandard,custom:false,color:chosenStandard===chosenStandard.toUpperCase()?'w':'b'};
+    draw();return;
+   }
+  }
+  if(!selected){
+   if(customBoard[r][c])selected=sq;
+  }else{
+   let from=coordinate(selected);
+   if(selected===sq){selected=null;draw();return;}
+   const moving=customBoard[from.r][from.c],target=customBoard[r][c];
+   if(!moving){selected=null;draw();return;}
+   if(target&&target.color===moving.color){selected=sq;draw();return;}
+   pushFreeHistory();
+   customBoard[r][c]=moving;
+   customBoard[from.r][from.c]=null;
+   selected=null;
+   freeTurn=freeTurn==='w'?'b':'w';
+  }
+  draw();return;
+ }
+ if(game.game_over())return;
+ if(opponent==='engine'&&game.turn()==='b')return;
+ let piece=game.get(sq);
+ if(selected){
+  let move=game.move({from:selected,to:sq,promotion:'q'});
+  if(move){
+   lastMove=[move.from,move.to];selected=null;draw();
+   if(opponent==='engine'&&game.turn()==='b')setTimeout(engineMove,300);
+   return;
+  }
+ }
+ selected=piece&&piece.color===game.turn()?sq:null;
+ draw();
+}
+function pushFreeHistory(){
+ freeHistory.push(customBoard.map(row=>row.map(cell=>cell?{...cell}:null)));
+ if(freeHistory.length>100)freeHistory.shift();
+}
+function undo(){
+ if(mode==='free'||mode==='edit'){
+  if(!freeHistory.length)return;
+  customBoard=freeHistory.pop();selected=null;draw();return;
+ }
+ if(mode==='normal'){
+  if(!game.history().length)return;
+  game.undo();
+  if(opponent==='engine'&&game.turn()==='b')game.undo();
+  draw();
+ }
+}
+function resetGame(){
+ game.reset();customBoard=boardFromGame();freeHistory=[];selected=null;chosenCustom=null;lastMove=null;mode='normal';
+ document.getElementById('normalBtn').classList.add('active');
+ document.getElementById('freeBtn').classList.remove('active');
+ document.getElementById('editBtn').classList.remove('active');
+ showTab('game');draw();
+}
+function flipBoard(){flipped=!flipped;draw()}
+
+function setFreeTool(tool){
+ freeTool=tool;selected=null;
+ if(tool==='move'){chosenCustom=null;chosenStandard='';}
+ document.getElementById('placeCustomBtn').classList.toggle('active',tool==='place');
+ document.getElementById('moveCustomBtn').classList.toggle('active',tool==='move');
+ document.getElementById('pieceToolStatus').textContent=tool==='place'
+  ?(chosenCustom?'Фигура выбрана: нажми на клетку доски для установки.':'Сначала выбери свою фигуру ниже.')
+  :'Нажми на фигуру на доске, затем на клетку назначения.';
+ renderCustomPalette();draw();
+}
+function chooseCustom(id){
+ if(chosenCustom===id&&freeTool==='place'){cancelPieceSelection();return;}
+ chosenCustom=id;chosenStandard='';
+ freeTool='place';
+ if(mode!=='free')setMode('free');
+ setFreeTool('place');
+ document.getElementById('pieceToolStatus').textContent='Выбрана фигура «'+(customPieces.find(p=>p.id===id)?.name||'')+'». Нажми на клетку доски.';
+ draw();renderCustomPalette();
+}
+function cancelPieceSelection(){
+ chosenCustom=null;chosenStandard='';
+ selected=null;freeTool='move';
+ document.getElementById('placeCustomBtn')?.classList.remove('active');
+ document.getElementById('moveCustomBtn')?.classList.add('active');
+ const info=document.getElementById('pieceToolStatus');if(info)info.textContent='Выбор отменён. Теперь можно перемещать фигуры.';
+ renderCustomPalette();draw();
+}
+function chooseStandard(p){
+ chosenStandard=p;chosenCustom=null;
+ if(mode!=='edit')setMode('edit');
+}
+function renderCustomPalette(){
+ const root=document.getElementById('customPalette');if(!root)return;
+ root.innerHTML='';
+ customPieces.forEach(p=>{
+  const row=document.createElement('div');row.className='piece-choice';
+  if(p.image){const img=document.createElement('img');img.src=p.image;row.append(img)}
+  else{const sym=document.createElement('span');sym.style.fontSize='30px';sym.textContent=p.glyph||'★';row.append(sym)}
+  const name=document.createElement('b');name.textContent=p.name;row.append(name);
+  const choose=document.createElement('button');choose.textContent=chosenCustom===p.id?'Выбрана':'Выбрать';choose.classList.toggle('active',chosenCustom===p.id);choose.onclick=()=>chooseCustom(p.id);row.append(choose);
+  root.append(row);
+ });
+}
+function renderCustom(){
+ const root=document.getElementById('myPieces');
+ root.innerHTML='';
+ if(!customPieces.length){
+  const empty=document.createElement('p');empty.className='small';
+  empty.textContent='Пока нет своих фигур. Создай первую ниже: укажи название, картинку и способ движения.';
+  root.append(empty);
+ }
+ customPieces.forEach(p=>{
+  let box=document.createElement('div');
+  box.className='upload-item';
+  let img=document.createElement('img');img.src=p.image||'';if(!p.image)img.style.display='none';
+  let title=document.createElement('b');title.textContent=p.name;
+  let description=document.createElement('span');
+  description.className='small';
+  description.textContent=p.movement+', дальность '+p.distance;
+  let use=document.createElement('button');
+  use.textContent='Выбрать для доски';
+  use.onclick=()=>chooseCustom(p.id);
+  let del=document.createElement('button');
+  del.textContent='Удалить';
+  del.onclick=()=>{
+   customPieces=customPieces.filter(x=>x.id!==p.id);
+   localStorage.setItem('csPieces',JSON.stringify(customPieces));
+   renderCustom();renderCustomPalette();draw();
+  };
+  if(!p.image){let sym=document.createElement('div');sym.style.fontSize='34px';sym.textContent=p.glyph||'★';box.append(sym)}
+  box.append(img,title,description,use,del);
+  root.append(box);
+ });
+}
+function createPiece(){
+ const name=document.getElementById('pieceName').value.trim();
+ const file=document.getElementById('pieceFile').files[0];
+ const glyphValue=document.getElementById('pieceGlyph').value.trim()||'★';
+ if(!name){alert('Укажи название фигуры.');return}
+ if(file&&file.size>2*1024*1024){alert('Изображение должно быть не больше 2 МБ.');return}
+ const save=image=>{
+  const p={
+   id:'piece_'+Date.now(),name,image:image||'',glyph:glyphValue,
+   color:document.getElementById('pieceColor').value,
+   movement:document.getElementById('pieceMovement').value,
+   distance:Math.max(1,Math.min(8,Number(document.getElementById('pieceDistance').value)||1))
+  };
+  customPieces.push(p);
+  try{localStorage.setItem('csPieces',JSON.stringify(customPieces))}
+  catch(e){customPieces.pop();alert('Недостаточно места для сохранения.');return}
+  document.getElementById('pieceName').value='';
+  document.getElementById('pieceFile').value='';
+  renderCustom();renderCustomPalette();autoSave();
+ };
+ if(file){const reader=new FileReader();reader.onload=()=>save(reader.result);reader.readAsDataURL(file)}
+ else save('');
+}
+function clearCreator(){
+ document.getElementById('pieceName').value='';
+ document.getElementById('pieceFile').value='';
+}
+function customCanMove(piece,dx,dy){
+ const ax=Math.abs(dx),ay=Math.abs(dy),distance=Math.max(ax,ay);
+ if(!distance||distance>piece.distance)return false;
+ switch(piece.movement){
+  case 'all':return true;
+  case 'straight':case 'rook':return dx===0||dy===0;
+  case 'diagonal':case 'bishop':return ax===ay;
+  case 'knight':return (ax===1&&ay===2)||(ax===2&&ay===1);
+  case 'one':case 'king':return distance===1;
+  case 'queen':return dx===0||dy===0||ax===ay;
+  default:return false;
+ }
+}
+function customMoveIsValid(piece,fromX,fromY,toX,toY,position){
+ const dx=toX-fromX,dy=toY-fromY;
+ if(!customCanMove(piece,dx,dy))return false;
+ const isKnight=piece.movement==='knight';
+ const isSingle=piece.movement==='one'||piece.movement==='king'||piece.movement==='knight';
+ if(isKnight||isSingle||piece.movement==='all')return true;
+ const steps=Math.max(Math.abs(dx),Math.abs(dy)),sx=Math.sign(dx),sy=Math.sign(dy);
+ for(let n=1;n<steps;n++){if(position[fromY+sy*n][fromX+sx*n])return false;}
+ return true;
+}
+function clearBoard(){
+ customBoard=Array.from({length:8},()=>Array(8).fill(null));
+ draw();
+}
+function startPosition(){
+ game.reset();customBoard=boardFromGame();freeHistory=[];selected=null;draw();
+}
+function startFromPosition(){
+ let rows=customBoard.map(row=>{
+  let s='',empty=0;
+  for(let item of row){
+   let p=item&&!item.custom?item.type:'';
+   if(!p)empty++;
+   else{if(empty)s+=empty;empty=0;s+=p}
+  }
+  if(empty)s+=empty;
+  return s;
+ });
+ let next=new Chess();
+ let fen=rows.join('/')+' '+document.getElementById('editTurn').value+' - - 0 1';
+ if(!next.load(fen)){alert('Для обычной партии необходимы белый и чёрный короли.');return}
+ game=next;setMode('normal');draw();
+}
+function copyFen(){
+ if(mode!=='normal'){alert('FEN доступен в обычном шахматном режиме.');return}
+ navigator.clipboard.writeText(game.fen()).then(()=>alert('FEN скопирован!')).catch(()=>prompt('FEN:',game.fen()));
+}
+function loadFen(){
+ let f=prompt('Вставь FEN:');
+ if(!f)return;
+ let next=new Chess();
+ if(next.load(f)){game=next;mode='normal';draw()}
+ else alert('Неверный FEN');
+}
+function appSnapshot(){
+ return {
+  version:1,mode,flipped,fen:game.fen(),pgn:game.pgn(),
+  customBoard,customPieces,customImages,freeTurn,
+  light:getComputedStyle(document.documentElement).getPropertyValue('--light').trim(),
+  dark:getComputedStyle(document.documentElement).getPropertyValue('--dark').trim(),
+  opponent
+ };
+}
+function autoSave(){
+ try{
+  localStorage.setItem('csAutoSave',JSON.stringify(appSnapshot()));
+  const el=document.getElementById('saveStatus');if(el)el.textContent='✓ Автосохранено в браузере';
+ }catch(e){
+  const el=document.getElementById('saveStatus');if(el)el.textContent='⚠ Не хватает места в хранилище. Скачай резервную копию.';
+ }
+}
+function restoreAutoSave(){
+ try{
+  const raw=localStorage.getItem('csAutoSave');if(!raw)return;
+  const data=JSON.parse(raw);if(!data||data.version!==1)return;
+  if(data.pgn){const restored=new Chess();if(restored.load_pgn(data.pgn))game=restored;else if(data.fen)game.load(data.fen);}
+  else if(data.fen){const restored=new Chess();if(restored.load(data.fen))game=restored;}
+  if(Array.isArray(data.customBoard)&&data.customBoard.length===8)customBoard=data.customBoard;
+  if(Array.isArray(data.customPieces))customPieces=data.customPieces;
+  if(data.freeTurn==='w'||data.freeTurn==='b')freeTurn=data.freeTurn;
+  if(data.customImages&&typeof data.customImages==='object')customImages=data.customImages;
+  if(['normal','free','edit'].includes(data.mode))mode=data.mode;
+  flipped=!!data.flipped;
+  if(data.opponent)opponent=data.opponent;
+  if(data.light&&data.dark){
+   document.documentElement.style.setProperty('--light',data.light);
+   document.documentElement.style.setProperty('--dark',data.dark);
+  }
+ }catch(e){console.warn('Не удалось восстановить автосохранение',e);}
+}
+function downloadBlob(blob,name){
+ const url=URL.createObjectURL(blob),a=document.createElement('a');
+ a.href=url;a.download=name;document.body.appendChild(a);a.click();a.remove();
+ setTimeout(()=>URL.revokeObjectURL(url),1500);
+}
+function exportBackup(){
+ const data={...appSnapshot(),savedPositions};
+ downloadBlob(new Blob([JSON.stringify(data,null,2)],{type:'application/json'}),'chess-studio-backup.json');
+}
+function importBackup(event){
+ const file=event.target.files&&event.target.files[0];if(!file)return;
+ const reader=new FileReader();reader.onload=()=>{
+  try{
+   const d=JSON.parse(reader.result);if(!d||!d.version)throw Error('Неверный файл копии');
+   if(d.pgn){const g=new Chess();if(g.load_pgn(d.pgn))game=g;else if(d.fen){const g2=new Chess();if(!g2.load(d.fen))throw Error('Неверная партия');game=g2;}}
+   else if(d.fen){const g=new Chess();if(!g.load(d.fen))throw Error('Неверный FEN');game=g;}
+   if(Array.isArray(d.customBoard)&&d.customBoard.length===8)customBoard=d.customBoard;
+   if(Array.isArray(d.customPieces))customPieces=d.customPieces;
+   if(d.freeTurn==='w'||d.freeTurn==='b')freeTurn=d.freeTurn;
+   if(d.customImages&&typeof d.customImages==='object')customImages=d.customImages;
+   if(['normal','free','edit'].includes(d.mode))mode=d.mode;
+   flipped=!!d.flipped;if(Array.isArray(d.savedPositions))savedPositions=d.savedPositions;
+   localStorage.setItem('csPieces',JSON.stringify(customPieces));
+   localStorage.setItem('csImages',JSON.stringify(customImages));
+   localStorage.setItem('csSavedPositions',JSON.stringify(savedPositions));
+   if(d.light&&d.dark)setTheme(d.light,d.dark);
+   selected=null;showTab(mode==='free'?'pieces':mode==='edit'?'edit':'game');draw();
+   alert('Резервная копия загружена!');
+  }catch(err){alert('Не удалось загрузить копию: '+err.message)}
+  event.target.value='';
+ };
+ reader.readAsText(file);
+}
+function saveNamedPosition(){
+ const name=prompt('Название сохранения:','Моя позиция');if(!name||!name.trim())return;
+ const item={id:Date.now(),name:name.trim(),snapshot:appSnapshot(),date:new Date().toLocaleString()};
+ savedPositions.unshift(item);
+ try{localStorage.setItem('csSavedPositions',JSON.stringify(savedPositions));alert('Позиция сохранена!');}
+ catch(e){savedPositions.shift();alert('Не удалось сохранить: закончилось место. Скачай резервную копию.');}
+}
+function showSavedPositions(){
+ if(!savedPositions.length){alert('Сохранений пока нет.');return;}
+ const menu=savedPositions.map((x,i)=>(i+1)+'. '+x.name+' ('+x.date+')').join('\n');
+ const answer=prompt('Введи номер сохранения для загрузки:\n'+menu);if(answer===null)return;
+ const index=Number(answer)-1;if(!Number.isInteger(index)||!savedPositions[index]){alert('Неверный номер.');return}
+ const d=savedPositions[index].snapshot;
+ try{
+  if(d.pgn){const g=new Chess();if(g.load_pgn(d.pgn))game=g;else if(d.fen){const g2=new Chess();if(g2.load(d.fen))game=g2;}}
+  else if(d.fen){const g=new Chess();if(!g.load(d.fen))throw Error('FEN повреждён');game=g;}
+  customBoard=d.customBoard||customBoard;
+  customPieces=d.customPieces||customPieces;
+  customImages=d.customImages||customImages;
+  if(d.freeTurn==='w'||d.freeTurn==='b')freeTurn=d.freeTurn;
+  mode=d.mode||'normal';flipped=!!d.flipped;
+  if(d.light&&d.dark)setTheme(d.light,d.dark);
+  selected=null;showTab(mode==='free'?'pieces':mode==='edit'?'edit':'game');draw();
+ }catch(e){alert('Не удалось открыть сохранение.');}
+}
+async function exportBoardPNG(){
+ const data=currentData(),canvas=document.createElement('canvas'),size=120,margin=32;
+ canvas.width=canvas.height=size*8+margin;
+ const ctx=canvas.getContext('2d');
+ ctx.fillStyle='#ffffff';ctx.fillRect(0,0,canvas.width,canvas.height);
+ const light=getComputedStyle(document.documentElement).getPropertyValue('--light').trim()||'#e8d9bd';
+ const dark=getComputedStyle(document.documentElement).getPropertyValue('--dark').trim()||'#77966b';
+ const imageCache={};
+ for(let y=0;y<8;y++)for(let x=0;x<8;x++){
+  const r=flipped?7-y:y,c=flipped?7-x:x,item=data[r][c],px=margin/2+x*size,py=margin/2+y*size;
+  ctx.fillStyle=((r+c)%2)?dark:light;ctx.fillRect(px,py,size,size);
+  if(!item)continue;
+  const id=item.custom?item.id:null,imgSrc=id?customPieces.find(p=>p.id===id)?.image:customImages[item.type];
+  if(imgSrc){
+   try{
+    let img=imageCache[imgSrc];
+    if(!img){img=new Image();img.src=imgSrc;await new Promise((resolve,reject)=>{img.onload=resolve;img.onerror=reject;});imageCache[imgSrc]=img;}
+    ctx.drawImage(img,px+7,py+7,size-14,size-14);continue;
+   }catch(e){}
+  }
+  ctx.textAlign='center';ctx.textBaseline='middle';ctx.font='90px "Segoe UI Symbol",serif';
+  ctx.fillStyle=item.color==='b'||(item.type&&item.type===item.type.toLowerCase())?'#171717':'#fffdf4';
+  ctx.strokeStyle=item.color==='b'||(item.type&&item.type===item.type.toLowerCase())?'#eee8dc':'#282828';
+  ctx.lineWidth=2;
+  const symbol=id?(customPieces.find(p=>p.id===id)?.glyph||'★'):glyph[item.type]||'?';
+  ctx.strokeText(symbol,px+size/2,py+size/2+3);
+  ctx.fillText(symbol,px+size/2,py+size/2+3);
+ }
+ ctx.fillStyle='#222';ctx.font='18px Arial';ctx.textAlign='center';
+ for(let x=0;x<8;x++)ctx.fillText(files[flipped?7-x:x],margin/2+x*size+size/2,canvas.height-7);
+ ctx.textAlign='left';
+ for(let y=0;y<8;y++)ctx.fillText(String(flipped?y+1:8-y),4,margin/2+y*size+size/2+6);
+ canvas.toBlob(blob=>{if(blob)downloadBlob(blob,'chess-board.png');else alert('Не удалось создать PNG.');},'image/png');
+}
+function setTheme(light,dark){
+ document.documentElement.style.setProperty('--light',light);
+ document.documentElement.style.setProperty('--dark',dark);
+ document.getElementById('lightColor').value=light;
+ document.getElementById('darkColor').value=dark;
+}
+function setCustomTheme(){
+ setTheme(document.getElementById('lightColor').value,document.getElementById('darkColor').value);
+}
+function fullScreen(){
+ if(!document.fullscreenElement)document.documentElement.requestFullscreen?.();
+ else document.exitFullscreen?.();
+}
+function renderStandardUploads(){
+ let root=document.getElementById('standardUploads');
+ if(root.children.length)return;
+ Object.keys(glyph).forEach(p=>{
+  let box=document.createElement('div');box.className='upload-item';
+  let label=document.createElement('label');label.textContent=names[p];
+  let input=document.createElement('input');
+  input.type='file';input.accept='image/png,image/jpeg,image/webp';
+  input.onchange=()=>{
+   let file=input.files[0];if(!file)return;
+   if(file.size>2*1024*1024){alert('Максимум 2 МБ');return}
+   let reader=new FileReader();
+   reader.onload=()=>{
+    customImages[p]=reader.result;
+    try{localStorage.setItem('csImages',JSON.stringify(customImages))}
+    catch(e){alert('Не удалось сохранить изображение.');return}
+    draw();autoSave();
+   };
+   reader.readAsDataURL(file);
+  };
+  box.append(label,input);root.append(box);
+ });
+}
+const standardPalette=document.getElementById('standardPalette');
+Object.keys(glyph).forEach(p=>{
+ let b=document.createElement('button');
+ b.className='palette-piece';b.textContent=glyph[p];
+ b.onclick=()=>{
+  chooseStandard(p);
+  document.querySelectorAll('#standardPalette button').forEach(x=>x.classList.remove('active'));
+  b.classList.add('active');
+ };
+ standardPalette.append(b);
+});
+function setOpponent(v){
+ opponent=v;
+ document.getElementById('engineStatus').textContent=v==='engine'?'Игра против движка':'Два игрока';
+}
+function connectEngine(){
+ if(engine)return;
+ try{
+  engine=new Worker('https://cdn.jsdelivr.net/npm/stockfish@16.0.0/src/stockfish.js');
+  engine.onmessage=e=>{
+   let msg=String(e.data);
+   if(msg==='uciok')engine.postMessage('isready');
+   if(msg==='readyok'){
+    engineReady=true;
+    document.getElementById('engineStatus').textContent='Stockfish подключён';
+   }
+   if(msg.startsWith('bestmove')){
+    thinking=false;
+    let uci=msg.split(' ')[1];
+    if(uci&&uci!=='(none)'){
+     let move={from:uci.slice(0,2),to:uci.slice(2,4)};
+     if(uci.length>4)move.promotion=uci[4];
+     let result=game.move(move);
+     if(result)lastMove=[result.from,result.to];
+    }
+    draw();
+   }
+  };
+  engine.onerror=()=>{
+   engine=null;
+   document.getElementById('engineStatus').textContent='Ошибка загрузки движка';
+  };
+  engine.postMessage('uci');
+ }catch(e){alert('Не удалось подключить Stockfish')}
+}
+function engineMove(){
+ if(!engineReady){connectEngine();return}
+ if(mode!=='normal'||thinking||game.game_over())return;
+ thinking=true;
+ engine.postMessage('position fen '+game.fen());
+ engine.postMessage('go depth '+document.getElementById('difficulty').value);
+}
+customBoard=boardFromGame();
+restoreAutoSave();
+document.addEventListener('keydown',e=>{if(e.key==='Escape')cancelPieceSelection()});
+draw();
+showTab(mode==='free'?'pieces':mode==='edit'?'edit':'game');
+</script>
+</body>
+</html>
